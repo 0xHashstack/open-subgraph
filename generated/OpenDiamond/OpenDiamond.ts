@@ -1644,6 +1644,66 @@ export class LoanFee__Params {
   }
 }
 
+export class BorrowInterestRateUpdated extends ethereum.Event {
+  get params(): BorrowInterestRateUpdated__Params {
+    return new BorrowInterestRateUpdated__Params(this);
+  }
+}
+
+export class BorrowInterestRateUpdated__Params {
+  _event: BorrowInterestRateUpdated;
+
+  constructor(event: BorrowInterestRateUpdated) {
+    this._event = event;
+  }
+
+  get market(): Bytes {
+    return this._event.parameters[0].value.toBytes();
+  }
+
+  get commitment(): Bytes {
+    return this._event.parameters[1].value.toBytes();
+  }
+
+  get interestRate(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+
+  get time(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
+  }
+}
+
+export class DepositInterestRateUpdated extends ethereum.Event {
+  get params(): DepositInterestRateUpdated__Params {
+    return new DepositInterestRateUpdated__Params(this);
+  }
+}
+
+export class DepositInterestRateUpdated__Params {
+  _event: DepositInterestRateUpdated;
+
+  constructor(event: DepositInterestRateUpdated) {
+    this._event = event;
+  }
+
+  get market(): Bytes {
+    return this._event.parameters[0].value.toBytes();
+  }
+
+  get commitment(): Bytes {
+    return this._event.parameters[1].value.toBytes();
+  }
+
+  get interestRate(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
+
+  get time(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
+  }
+}
+
 export class OpenDiamond extends ethereum.SmartContract {
   static bind(address: Address): OpenDiamond {
     return new OpenDiamond("OpenDiamond", address);

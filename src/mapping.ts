@@ -43,8 +43,10 @@ import {
   BorrowAprAccrued,
   WithdrawCollateralFee,
   LoanFee,
+  DepositInterestRateUpdated,
+  BorrowInterestRateUpdated,
 } from "../generated/OpenDiamond/OpenDiamond"
-import { User, Deposit, Reserve, Loan, Collateral, Utilisation } from "../generated/schema"
+import { User, Deposit, Reserve, Loan, Collateral, Utilisation, Apr } from "../generated/schema"
 
 export function handleAPRupdated(event: APRupdated): void {}
 
@@ -735,6 +737,42 @@ export function handleLoanRepaid(event: LoanRepaid): void {
   loan.state = 'repaid'
   loan.currentAmount = BigInt.fromI32(0)
   loan.save()
+}
+
+export function handleDepositInterestRateUpdated(event: DepositInterestRateUpdated): void {
+  let timestamp = event.params.time.toI32()
+  let dayID = timestamp / 86400
+  let dayStartTimestamp = dayID * 86400
+  let dateEntityId = dayStartTimestamp.toString().concat('-deposit').concat(event.params.market.toString()).concat(event.params.commitment.toString())
+
+  let apr = Apr.load(dateEntityId);
+  if (!apr) {
+    apr = new Apr(dateEntityId)
+    apr.instrumentType = 'deposit'
+    apr.market = event.params.market.toString()
+    apr.commitment = event.params.commitment.toString()
+    apr.date = dayStartTimestamp
+  }
+  apr.interest = event.params.interestRate.toI32()
+  apr.save()
+}
+
+export function handleBorrowInterestRateUpdated(event: BorrowInterestRateUpdated): void {
+  let timestamp = event.params.time.toI32()
+  let dayID = timestamp / 86400
+  let dayStartTimestamp = dayID * 86400
+  let dateEntityId = dayStartTimestamp.toString().concat('-borrow').concat(event.params.market.toString()).concat(event.params.commitment.toString())
+
+  let apr = Apr.load(dateEntityId);
+  if (!apr) {
+    apr = new Apr(dateEntityId)
+    apr.instrumentType = 'borrow'
+    apr.market = event.params.market.toString()
+    apr.commitment = event.params.commitment.toString()
+    apr.date = dayStartTimestamp
+  }
+  apr.interest = event.params.interestRate.toI32()
+  apr.save()
 }
 
 export function handleMarket2Added(event: Market2Added): void {}

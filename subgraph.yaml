@@ -6,9 +6,9 @@ dataSources:
     name: OpenDiamond
     network: chapel
     source:
-      address: "0x1008645e3534Ec77400e9F51d0CDF64Eb53C539C"
+      address: "0x5eE1b04A194e812D78c700D675f6baD410EE93D7"
       abi: OpenDiamond
-      startBlock: 18263512
+      startBlock: 18268105
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -142,4 +142,8 @@ dataSources:
           handler: handleWithdrawCollateralFee
         - event: LoanFee(indexed address,bytes32,bytes32,uint256,uint256)
           handler: handleLoanFee
+        - event: DepositInterestRateUpdated(bytes32,bytes32,uint256,uint256)
+          handler: handleDepositInterestRateUpdated
+        - event: BorrowInterestRateUpdated(bytes32,bytes32,uint256,uint256)
+          handler: handleBorrowInterestRateUpdated
       file: ./src/mapping.ts
