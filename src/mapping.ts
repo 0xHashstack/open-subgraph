@@ -143,7 +143,7 @@ export function handleDepositWithdrawal(event: DepositWithdrawal): void {
 export function handleSavingsAprAccrued(event: SavingsAprAccrued): void {
   let user = User.load(event.params.account.toHex())
   if (!user) {
-    log.warning(`[handleDepositWithdrawal|${event.transaction.hash.toHexString()}] User not found`, [])
+    log.warning(`[handleSavingsAprAccrued|${event.transaction.hash.toHexString()}] User not found`, [])
     return
   }
   let deposits = user.deposits
@@ -304,7 +304,7 @@ export function handleTokensIssued(event: TokensIssued): void {}
 export function handleLiquidation(event: Liquidation): void {
   let user = User.load(event.params.account.toHex())
   if (!user) {
-    log.warning(`[handleWithdrawPartialLoan|${event.transaction.hash.toHexString()}] User not found`, [])
+    log.warning(`[handleLiquidation|${event.transaction.hash.toHexString()}] User not found`, [])
     return
   }
   let loans = user.loans
@@ -319,13 +319,13 @@ export function handleLiquidation(event: Liquidation): void {
   }
 
   if (!loan) {
-    log.warning(`[handleWithdrawPartialLoan|${event.transaction.hash.toHexString()}] Loan not found`, [])
+    log.warning(`[handleLiquidation|${event.transaction.hash.toHexString()}] Loan not found`, [])
     return
   }
 
   let collateral = Collateral.load(loan.collateral)
   if (!collateral) {
-    log.warning(`[handleWithdrawPartialLoan|${event.transaction.hash.toHexString()}] Collateral not found`, [])
+    log.warning(`[handleLiquidation|${event.transaction.hash.toHexString()}] Collateral not found`, [])
     return
   }
   collateral.currentAmount = BigInt.fromI32(0)
@@ -365,7 +365,7 @@ export function handleAddCollateral(event: AddCollateral): void {
 
   let collateral = Collateral.load(loan.collateral)
   if (!collateral) {
-    log.warning(`[handleWithdrawPartialLoan|${event.transaction.hash.toHexString()}] Collateral not found`, [])
+    log.warning(`[handleAddCollateral|${event.transaction.hash.toHexString()}] Collateral not found`, [])
     return
   }
   collateral.currentAmount += event.params.amount
@@ -435,6 +435,7 @@ export function handleMarketSwapped(event: MarketSwapped): void {
 
   // increase reserves for updated loan current market
   dateEntityId = dayStartTimestamp.toString().concat('-borrow').concat(loan.currentMarket.toString()).concat(loan.commitment.toString())
+  reserve = Reserve.load(dateEntityId);
   if (!reserve) {
     reserve = new Reserve(dateEntityId)
     reserve.market = loan.currentMarket.toString()
@@ -449,7 +450,7 @@ export function handleMarketSwapped(event: MarketSwapped): void {
 export function handleWithdrawCollateral(event: WithdrawCollateral): void {
   let user = User.load(event.params.account.toHex())
   if (!user) {
-    log.error(`[handleAddCollateral|${event.transaction.hash.toHexString()}] User not found`, [])
+    log.error(`[handleWithdrawCollateral|${event.transaction.hash.toHexString()}] User not found`, [])
     return
   }
   let loans: Array<string>
@@ -468,13 +469,13 @@ export function handleWithdrawCollateral(event: WithdrawCollateral): void {
   }
 
   if (!loan) {
-    log.error(`[handleAddCollateral|${event.transaction.hash.toHexString()}] Loan not found`, [])
+    log.error(`[handleWithdrawCollateral|${event.transaction.hash.toHexString()}] Loan not found`, [])
     return
   }
 
   let collateral = Collateral.load(loan.collateral)
   if (!collateral) {
-    log.warning(`[handleWithdrawPartialLoan|${event.transaction.hash.toHexString()}] Collateral not found`, [])
+    log.warning(`[handleWithdrawCollateral|${event.transaction.hash.toHexString()}] Collateral not found`, [])
     return
   }
   collateral.currentAmount -= event.params.amount
@@ -611,7 +612,7 @@ export function handleNewLoan(event: NewLoan): void {
 export function handleWithdrawCollateralFee(event: WithdrawCollateralFee): void {
   let user = User.load(event.params.account.toHex())
   if (!user) {
-    log.warning(`[handleWithdrawPartialLoan|${event.transaction.hash.toHexString()}] User not found`, [])
+    log.warning(`[handleWithdrawCollateralFee|${event.transaction.hash.toHexString()}] User not found`, [])
     return
   }
   let loans = user.loans
@@ -626,13 +627,13 @@ export function handleWithdrawCollateralFee(event: WithdrawCollateralFee): void 
   }
 
   if (!loan) {
-    log.warning(`[handleWithdrawPartialLoan|${event.transaction.hash.toHexString()}] Loan not found`, [])
+    log.warning(`[handleWithdrawCollateralFee|${event.transaction.hash.toHexString()}] Loan not found`, [])
     return
   }
 
   let collateral = Collateral.load(loan.collateral)
   if (!collateral) {
-    log.warning(`[handleWithdrawPartialLoan|${event.transaction.hash.toHexString()}] Collateral not found`, [])
+    log.warning(`[handleWithdrawCollateralFee|${event.transaction.hash.toHexString()}] Collateral not found`, [])
     return
   }
   collateral.feePaid = (collateral.feePaid || BigInt.fromI32(0)) + event.params.fee
@@ -642,7 +643,7 @@ export function handleWithdrawCollateralFee(event: WithdrawCollateralFee): void 
 export function handleLoanFee(event: LoanFee): void {
   let user = User.load(event.params.account.toHex())
   if (!user) {
-    log.warning(`[handleWithdrawPartialLoan|${event.transaction.hash.toHexString()}] User not found`, [])
+    log.warning(`[handleLoanFee|${event.transaction.hash.toHexString()}] User not found`, [])
     return
   }
   let loans = user.loans
@@ -657,7 +658,7 @@ export function handleLoanFee(event: LoanFee): void {
   }
 
   if (!loan) {
-    log.warning(`[handleWithdrawPartialLoan|${event.transaction.hash.toHexString()}] Loan not found`, [])
+    log.warning(`[handleLoanFee|${event.transaction.hash.toHexString()}] Loan not found`, [])
     return
   }
 
@@ -668,7 +669,7 @@ export function handleLoanFee(event: LoanFee): void {
 export function handleLoanRepaid(event: LoanRepaid): void {
   let user = User.load(event.params.account.toHex())
   if (!user) {
-    log.warning(`[handleWithdrawPartialLoan|${event.transaction.hash.toHexString()}] User not found`, [])
+    log.warning(`[handleLoanRepaid|${event.transaction.hash.toHexString()}] User not found`, [])
     return
   }
   let loans = user.loans
@@ -676,14 +677,18 @@ export function handleLoanRepaid(event: LoanRepaid): void {
   if (loans && loans.length > 0) {
     for(let i=0; i<loans.length; i++) {
       loan = Loan.load(loans[i])
-      if (loan && loan.initialMarket == event.params.market.toString() && loan.commitment == event.params.commitment.toString() && loan.state == 'active') {
-        break
+      if (loan){
+        if (loan.initialMarket == event.params.market.toString() && loan.commitment == event.params.commitment.toString() && loan.state == 'active') {
+          break
+        }
+      } else {
+        log.warning(`[handleLoanRepaid|${event.transaction.hash.toHexString()}] Loan not found`, [])
       }
     }
   }
 
   if (!loan) {
-    log.warning(`[handleWithdrawPartialLoan|${event.transaction.hash.toHexString()}] Loan not found`, [])
+    log.warning(`[handleLoanRepaid|${event.transaction.hash.toHexString()}] Loan not found`, [])
     return
   }
 
@@ -707,7 +712,7 @@ export function handleLoanRepaid(event: LoanRepaid): void {
     // deducting remnant amount in collateral market for flexible loan
     let collateral = Collateral.load(loan.collateral)
     if (!collateral) {
-      log.warning(`[handleWithdrawPartialLoan|${event.transaction.hash.toHexString()}] Collateral not found`, [])
+      log.warning(`[handleLoanRepaid|${event.transaction.hash.toHexString()}] Collateral not found`, [])
       return
     }
     let dateEntityId = dayStartTimestamp.toString().concat('-borrow').concat(collateral.market.toString()).concat(event.params.commitment.toString())
