@@ -565,13 +565,13 @@ export function handleNewLoan(event: NewLoan): void {
 
   let loan = new Loan(entityId)
   loan.initialMarket = event.params.loanMarket.toString()
-  loan.initialAmount = event.params.initialLoanAmount
+  loan.initialAmount = event.params.loanAmount
   loan.commitment = event.params.commitment.toString()
   loan.currentMarket = event.params.loanMarket.toString()
   loan.currentAmount = event.params.loanAmount
   loan.isSwapped = false
   loan.state = 'active'
-  loan.feePaid = event.params.initialLoanAmount - event.params.loanAmount
+  loan.feePaid = event.params.feePaid
   loan.interestAccrued = BigInt.fromI32(0)
   loan.collateral = event.transaction.hash.toHexString()
   loan.user = event.params.account.toHexString()

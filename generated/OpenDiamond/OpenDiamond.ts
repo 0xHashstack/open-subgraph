@@ -1213,7 +1213,7 @@ export class NewLoan__Params {
     return this._event.parameters[6].value.toBigInt();
   }
 
-  get initialLoanAmount(): BigInt {
+  get feePaid(): BigInt {
     return this._event.parameters[7].value.toBigInt();
   }
 
