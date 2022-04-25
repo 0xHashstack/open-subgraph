@@ -50,7 +50,7 @@ import { User, Deposit, Reserve, Loan, Collateral, Utilisation, Apr } from "../g
 
 export function handleAPRupdated(event: APRupdated): void {}
 
-export function handleAPYupdated(event: APYupdated): void {}
+export function handleSavingsAPRupdated(event: APYupdated): void {}
 
 export function handleCollateralPreClosureFeesUpdated(
   event: CollateralPreClosureFeesUpdated
@@ -736,6 +736,7 @@ export function handleLoanRepaid(event: LoanRepaid): void {
   //update loan records
   loan.state = 'repaid'
   loan.currentAmount = BigInt.fromI32(0)
+  loan.updatedAt = timestamp
   loan.save()
 }
 
