@@ -50,7 +50,7 @@ import { User, Deposit, Reserve, Loan, Collateral, Utilisation, Apr } from "../g
 
 export function handleAPRupdated(event: APRupdated): void {}
 
-export function handleAPYupdated(event: APYupdated): void {}
+export function handleSavingsAPRupdated(event: APYupdated): void {}
 
 export function handleCollateralPreClosureFeesUpdated(
   event: CollateralPreClosureFeesUpdated
@@ -565,13 +565,13 @@ export function handleNewLoan(event: NewLoan): void {
 
   let loan = new Loan(entityId)
   loan.initialMarket = event.params.loanMarket.toString()
-  loan.initialAmount = event.params.initialLoanAmount
+  loan.initialAmount = event.params.loanAmount
   loan.commitment = event.params.commitment.toString()
   loan.currentMarket = event.params.loanMarket.toString()
   loan.currentAmount = event.params.loanAmount
   loan.isSwapped = false
   loan.state = 'active'
-  loan.feePaid = event.params.initialLoanAmount - event.params.loanAmount
+  loan.feePaid = event.params.feePaid
   loan.interestAccrued = BigInt.fromI32(0)
   loan.collateral = event.transaction.hash.toHexString()
   loan.user = event.params.account.toHexString()
@@ -736,6 +736,7 @@ export function handleLoanRepaid(event: LoanRepaid): void {
   //update loan records
   loan.state = 'repaid'
   loan.currentAmount = BigInt.fromI32(0)
+  loan.updatedAt = timestamp
   loan.save()
 }
 
